@@ -12,8 +12,8 @@
   --site-on-primary: #f7f3ed;
   --site-on-secondary: #242323;
   --site-on-background: #f7f3ed;
-  --site-font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --site-font-heading: Georgia, "Times New Roman", serif;
+--site-font-heading: 'Playfair Display', Georgia, serif;
+  --site-font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --site-heading-scale: 1;
   --site-spacing-scale: 1;
   --site-radius-scale: 1;
@@ -92,6 +92,34 @@ h1 { font-family:var(--site-font-heading); font-weight:400; font-size:clamp(54px
 .plaque span { display:block; font-family:var(--site-font-heading); font-style:italic; font-size:10px; color:#c7c0b7; }
 
 /* Character Avatar with fast, smooth movement */
+.avatar {
+  --x: 50%;
+  --y: 75%;
+  position: absolute;
+  z-index: 4;
+  left: var(--x);
+  top: var(--y);
+  width: 90px;
+  height: 150px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  filter: drop-shadow(0 7px 5px #0004);
+  will-change: left, top;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+@media (max-width: 600px) {
+  .avatar {
+    width: 65px;
+    height: 110px;
+  }
+}
 .avatar { --x:50%; --y:75%; position:absolute; z-index:4; left:var(--x); top:var(--y); transform:translate(-50%,-50%) scale(1.18); width:66px; height:137px;   transition: left 0.06s linear, top 0.06s linear; pointer-events:none; filter:drop-shadow(0 10px 7px #0004); will-change: left, top;
  }
 .avatar .face { position:absolute; top:8px; left:21px; width:24px; height:29px; background:linear-gradient(100deg,#b98263 0%,#e7bea0 40%,#d5a184 75%,#9c684e 100%); border-radius:45% 45% 48% 48%; z-index:4; box-shadow:inset -3px -1px 3px #7a4e3d35; }
@@ -106,8 +134,35 @@ h1 { font-family:var(--site-font-heading); font-weight:400; font-size:clamp(54px
 .avatar .boot { position:absolute; top:113px; left:11px; width:17px; height:19px; background:linear-gradient(90deg,#201a17,#594033 45%,#2b211c); border-radius:3px 3px 6px 5px; box-shadow:24px 0 #30241e; }
 
 /* Interactive UI Elements - Positioned over avatar head */
-.interact { position: absolute; z-index: 10; left: 50%; top: -45px; transform: translateX(-50%); min-width: 110px; height: 32px; padding: 0 10px; display: none; align-items: center; justify-content: center; gap: 6px; border: 1px solid #d4c4a7; border-radius: 3px; background: #18181bed; color: #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.5); cursor: pointer; font-size: 10px; letter-spacing: .08em; white-space: nowrap; pointer-events: auto; }
-.interact.show { display: flex; animation: pulse 1.5s infinite; }
+.interact {
+  position: absolute;
+  z-index: 10;
+  left: 50%;
+  top: -42px; /* Pulls it up above the top of the character's head */
+  transform: translateX(-50%);
+  min-width: 110px;
+  height: 32px;
+  padding: 0 10px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid #d4c4a7;
+  border-radius: 3px;
+  background: #18181bed;
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  cursor: pointer;
+  font-size: 10px;
+  letter-spacing: .08em;
+  white-space: nowrap;
+  pointer-events: auto;
+}
+
+.interact.show {
+  display: flex;
+  animation: pulse 1.5s infinite;
+}
 @keyframes pulse { 50% { box-shadow: 0 0 0 8px #ffffff28, 0 3px 20px #0003; } }
 
 .hint { position:absolute; z-index:5; bottom:20px; left:50%; transform:translateX(-50%); padding:10px 14px; border-radius:2px; color:#f7f3ed; background:#18181bd9; font-size:10px; letter-spacing:.05em; white-space:nowrap; }
@@ -153,6 +208,7 @@ h1 { font-family:var(--site-font-heading); font-weight:400; font-size:clamp(54px
   .controls { right:14px; bottom:16px; grid-template-columns:repeat(3,40px); grid-template-rows:repeat(2,40px); }
 }
 </style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -201,8 +257,13 @@ h1 { font-family:var(--site-font-heading); font-weight:400; font-size:clamp(54px
       
       <!-- Character Avatar with Head-on Prompt -->
       <div class="avatar" id="avatar" aria-label="Character avatar">
-        <div class="interact" id="interact" aria-label="Press E to explore nearby memory">PRESS E · VIEW</div>
-        <div class="hair-back"></div><div class="face"></div><div class="hijab"></div><div class="body"></div><div class="arm left"></div><div class="arm right"></div><div class="pants"></div><div class="boot"></div>
+<div class="interact" id="interact" aria-label="Press E to explore nearby memory">PRESS E · VIEW</div>
+         <img
+    class="costume-image"
+    id="avatarCostume"
+    src="character.png"
+    alt="Saarah's avatar"
+  >
       </div>
       
       <div class="hint" id="hint">Your journey begins with Memory 01. Walk up to it and press E.</div>
@@ -259,14 +320,14 @@ h1 { font-family:var(--site-font-heading); font-weight:400; font-size:clamp(54px
 
 <script>
 const memories = [
- {title:'The Day We Met', kicker:'Memory No. 01', art:'The Day We Met', text:'Funny how a birthday treat brought a group of strangers together. We were all there with the same friends, barely knew each other, and exchanged little more than a simple “Hi.” We had no idea we would end up sharing so many laughs later.'},
- {title:'From Strangers To Friends', kicker:'Memory No. 02', art:'From Strangers To Friends', text:'We met again with the same group, but this time things were different. The awkward hellos slowly turned into jokes, teasing, and making fun of each other. Somewhere along the way, we went from barely talking to being comfortable enough to roast each other without mercy.'},
- {title:'The Gang And The Chaos', kicker:'Memory No. 03', art:'The Gang And The Chaos', text:'A group of people, countless conversations, and absolutely no shortage of chaos. Somehow, even the simplest hangouts became stories worth remembering. The best part? Nobody had to plan the fun — it just happened.'},
- {title:'Officially A Professional Teaser', kicker:'Memory No. 04', art:'The Teasing', text:'At some point, teasing became our unofficial friendship language. One small comment could turn into a whole comedy show. And honestly, I do not know who started it — but I definitely know neither of us is innocent.'},
- {title:'Little Moments, Big Memories', kicker:'Memory No. 05', art:'Little Moments', text:'Not every good memory needs a big event. Sometimes it is just eating together, talking nonsense, laughing at the smallest things, and forgetting how quickly time passes. Those ordinary moments often become the ones we remember most.'},
- {title:'A Friendship Full Of Plot Twists', kicker:'Memory No. 06', art:'Plot Twists', text:'From barely knowing each other to having our own jokes and stories — what a journey. There have been random conversations, unexpected laughs, and enough teasing to last a lifetime. May the friendship continue, and may the jokes never get any less ridiculous.'},
- {title:'Look How Far You’ve Come', kicker:'Memory No. 07', art:'Look How Far You’ve Come', text:'Between all the jokes and everyday chaos, there are also big goals, hard work, and moments worth celebrating. It has been nice seeing you reach new milestones. Here is to more achievements, more adventures, and plenty of reasons to celebrate.'},
- {title:'A New Chapter Begins', kicker:'Memory No. 08', art:'A New Chapter Begins', text:'From the days we barely knew each other to seeing you reach this milestone — look at you now! Congratulations on your graduation, Saarah. You worked for this, and you deserve to be proud. May the next chapter bring you success, happiness, exciting opportunities, and beautiful memories. And of course, do not forget the friends who are still going to make fun of you along the way. Happy birthday!'}
+  {title:'The Day We Met', kicker:'Memory No. 01', art:'The Day We Met', text:'Funny how a birthday treat brought a group of strangers together. We were all there with the same friends, barely knew each other, and exchanged little more than a simple “Hi.” We had no idea we would end up sharing so many laughs later.'},
+  {title:'From Strangers To Friends', kicker:'Memory No. 02', art:'From Strangers To Friends', text:'We met again with the same group, but this time things were different. The awkward hellos slowly turned into jokes, teasing, and making fun of each other. Somewhere along the way, we went from barely talking to being comfortable enough to roast each other without mercy.'},
+  {title:'The Gang And The Chaos', kicker:'Memory No. 03', art:'The Gang And The Chaos', text:'A group of people, countless conversations, and absolutely no shortage of chaos. Somehow, even the simplest hangouts became stories worth remembering. The best part? Nobody had to plan the fun — it just happened.'},
+  {title:'Officially A Professional Teaser', kicker:'Memory No. 04', art:'The Teasing', text:'At some point, teasing became our unofficial friendship language. One small comment could turn into a whole comedy show. And honestly, I do not know who started it — but I definitely know neither of us is innocent.'},
+  {title:'Little Moments, Big Memories', kicker:'Memory No. 05', art:'Little Moments', text:'Not every good memory needs a big event. Sometimes it is just eating together, talking nonsense, laughing at the smallest things, and forgetting how quickly time passes. Those ordinary moments often become the ones we remember most.'},
+  {title:'A Friendship Full Of Plot Twists', kicker:'Memory No. 06', art:'Plot Twists', text:'From barely knowing each other to having our own jokes and stories — what a journey. There have been random conversations, unexpected laughs, and enough teasing to last a lifetime. May the friendship continue, and may the jokes never get any less ridiculous.'},
+  {title:'Look How Far You’ve Come', kicker:'Memory No. 07', art:'Look How Far You’ve Come', text:'Between all the jokes and everyday chaos, there are also big goals, hard work, and moments worth celebrating. It has been nice seeing you reach new milestones. Here is to more achievements, more adventures, and plenty of reasons to celebrate.'},
+  {title:'A New Chapter Begins', kicker:'Memory No. 08', art:'A New Chapter Begins', text:'From the days we barely knew each other to seeing you reach this milestone — look at you now! Congratulations on your graduation, Saarah. You worked for this, and you deserve to be proud. May the next chapter bring you success, happiness, exciting opportunities, and beautiful memories. And of course, do not forget the friends who are still going to make fun of you along the way. Happy birthday!'}
 ];
 
 const birthdayVideoInput = document.getElementById('birthdayVideoInput');
@@ -279,23 +340,26 @@ const interact = document.getElementById('interact');
 const hint = document.getElementById('hint');
 const modal = document.getElementById('modal');
 const ending = document.getElementById('ending');
+const gallery = document.getElementById('gallery');
+const avatarCostume = document.getElementById('avatarCostume');
+
+const everydayCostume = 'character.png';
+const graduationCostume = 'graduation.png';
 
 let x = 50, y = 75, nearest = -1;
-let visited = new Set();
-const frameElements = document.querySelectorAll('.frame');
+const visited = new Set();
+const frameElements = [...document.querySelectorAll('.frame')];
 
-// Setup Central Video Upload
-centralVideoFrame.addEventListener('click', () => birthdayVideoInput.click());
-birthdayVideoInput.addEventListener('change', () => {
-  const file = birthdayVideoInput.files && birthdayVideoInput.files[0];
-  if (!file) return;
-  birthdayVideoPlayer.src = URL.createObjectURL(file);
-  birthdayVideoPlayer.controls = true;
-  birthdayVideoPlayer.autoplay = true;
-  birthdayVideoPlayer.loop = true;
-  birthdayVideoPlayer.play().catch(() => {});
-  hint.textContent = 'Your birthday video is playing on the central screen';
-});
+function updateAvatarCostume() {
+  const isGraduated = visited.has(6);
+  const nextCostume = isGraduated ? graduationCostume : everydayCostume;
+
+  if (avatarCostume.getAttribute('src') !== nextCostume) {
+    avatarCostume.setAttribute('src', nextCostume);
+  }
+
+  avatar.classList.toggle('graduation', isGraduated);
+}
 
 function enterMuseum() {
   intro.style.display = 'none';
@@ -303,142 +367,325 @@ function enterMuseum() {
   updatePosition();
 }
 
+document.getElementById('enter').addEventListener('click', enterMuseum);
+
+// Central birthday video upload
+centralVideoFrame.addEventListener('click', () => birthdayVideoInput.click());
+
+birthdayVideoInput.addEventListener('change', () => {
+  const file = birthdayVideoInput.files?.[0];
+  if (!file) return;
+
+  birthdayVideoPlayer.src = URL.createObjectURL(file);
+  birthdayVideoPlayer.controls = true;
+  birthdayVideoPlayer.autoplay = true;
+  birthdayVideoPlayer.loop = true;
+  birthdayVideoPlayer.play().catch(() => {});
+
+  hint.textContent = 'Your birthday video is playing on the central screen';
+});
+
+// Calculate a frame's position relative to the gallery
+function frameCenter(element) {
+  const rect = element.getBoundingClientRect();
+  const galleryRect = gallery.getBoundingClientRect();
+
+  return {
+    x: ((rect.left + rect.width / 2 - galleryRect.left) / galleryRect.width) * 100,
+    y: ((rect.top + rect.height / 2 - galleryRect.top) / galleryRect.height) * 100
+  };
+}
+
+// Update character position, outfit, frame locks, and proximity
 function updatePosition() {
+  x = Math.max(2, Math.min(98, x));
+  y = Math.max(22, Math.min(91, y));
+
+  updateAvatarCostume();
+
   avatar.style.setProperty('--x', x + '%');
   avatar.style.setProperty('--y', y + '%');
-  checkProximity();
-}
 
-// Proximity checking between character position & frames
-const framePositions = [
-  { id: 0, x: 12, y: 35 }, { id: 1, x: 27, y: 35 },
-  { id: 2, x: 12, y: 65 }, { id: 3, x: 27, y: 65 },
-  { id: 4, x: 73, y: 35 }, { id: 5, x: 88, y: 35 },
-  { id: 6, x: 73, y: 65 }, { id: 7, x: 88, y: 65 }
-];
+  let bestDistance = Infinity;
+  let nextIndex = -1;
 
-function checkProximity() {
-  nearest = -1;
-  let minDistance = 18;
+  if (visited.size < memories.length) {
+    nextIndex = memories.findIndex((_, index) => !visited.has(index));
+  }
 
-  framePositions.forEach(fp => {
-    if (fp.id > visited.size) return; 
+  frameElements.forEach(frame => {
+    const index = Number(frame.dataset.memory);
+    const isNext = index === nextIndex;
+    const isVisited = visited.has(index);
 
-    const dist = Math.hypot(x - fp.x, y - fp.y);
-    if (dist < minDistance) {
-      minDistance = dist;
-      nearest = fp.id;
-    }
-  });
+    // Previously viewed frames stay clear; only unvisited future frames remain locked
+    frame.classList.toggle('locked', !isVisited && !isNext);
+    frame.classList.toggle('current-frame', isNext);
 
-  frameElements.forEach((frame, idx) => {
-    if (idx === nearest) {
-      frame.classList.add('near');
-    } else {
+    if (!isNext) {
       frame.classList.remove('near');
+      return;
+    }
+
+    const center = frameCenter(frame);
+    const distance = Math.hypot((center.x - x) * 0.9, (center.y - y) * 0.75);
+
+    frame.classList.toggle('near', distance < 13);
+
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      nearest = index;
     }
   });
 
-  if (nearest !== -1) {
-    interact.classList.add('show');
-    hint.textContent = `Near Memory 0${nearest + 1}. Press E or tap View Memory to open.`;
+  if (bestDistance >= 13) nearest = -1;
+
+  interact.classList.toggle('show', nearest >= 0);
+
+  if (nearest >= 0) {
+    hint.textContent = 'Press E to view Memory ' + String(nearest + 1).padStart(2, '0');
+  } else if (visited.size === memories.length) {
+    hint.textContent = 'You have explored every memory.';
   } else {
-    interact.classList.remove('show');
-    hint.textContent = visited.size === 0 ? "Your journey begins with Memory 01. Walk up to it and press E." : "Walk up to the next unlocked frame.";
+    hint.textContent = 'Find the clear frame. Walk close and press E to reveal its memory.';
   }
+
+  document.getElementById('collection').textContent = 'MEMORIES ' + visited.size + '/8';
 }
 
-function openMemory(index) {
-  if (index < 0 || index >= memories.length) return;
-  if (index > visited.size) return;
+// Character movement
+const heldKeys = new Set();
+let movementLoop = null;
+let lastMoveTime = 0;
 
-  const mem = memories[index];
-  const imgElement = frameElements[index].querySelector('img');
+function move(dir, amount = 1) {
+  if (
+    !museum.classList.contains('active') ||
+    modal.classList.contains('open') ||
+    ending.classList.contains('open')
+  ) return;
 
-  document.getElementById('memoryKicker').textContent = mem.kicker;
-  document.getElementById('memoryTitle').textContent = mem.title;
-  document.getElementById('memoryText').textContent = mem.text;
-  document.getElementById('memoryNumber').textContent = `0${index + 1} / 08`;
-  
-  const memoryArtContainer = document.getElementById('memoryArt');
-  if (imgElement) {
-    memoryArtContainer.innerHTML = `<img src="${imgElement.src}" alt="${mem.title}">`;
-  } else {
-    memoryArtContainer.textContent = mem.art;
-  }
+  const step = 0.55 * amount;
 
-  modal.classList.add('open');
-  visited.add(index);
-  document.getElementById('collection').textContent = `MEMORIES ${visited.size}/8`;
+  if (dir === 'left') x -= step;
+  if (dir === 'right') x += step;
+  if (dir === 'up') y -= step;
+  if (dir === 'down') y += step;
 
-  if (index + 1 < frameElements.length) {
-    frameElements[index + 1].classList.remove('locked');
-  }
-
-  // Smooth pause before showing the ending wish after the 8th memory closes
-  if (visited.size === memories.length) {
-    const originalCloseHandler = () => {
-      modal.classList.remove('open');
-      setTimeout(() => {
-        ending.classList.add('open');
-      }, 600); // Smooth pause duration
-      document.getElementById('closeModal').removeEventListener('click', originalCloseHandler);
-    };
-    // Temporarily hook into modal close for the 8th memory
-    document.getElementById('closeModal').onclick = originalCloseHandler;
-  }
-}
-
-// Fast movement step size (9)
-function move(dir) {
-  const step = 9;
-  if (dir === 'up') y = Math.max(25, y - step);
-  if (dir === 'down') y = Math.min(88, y + step);
-  if (dir === 'left') x = Math.max(5, x - step);
-  if (dir === 'right') x = Math.min(95, x + step);
+  avatar.classList.add('walking');
   updatePosition();
 }
 
-window.addEventListener('keydown', (e) => {
-  if (modal.classList.contains('open')) {
-    if (e.key === 'Escape') {
-      modal.classList.remove('open');
-      if (visited.size === memories.length) {
-        setTimeout(() => ending.classList.add('open'), 100);
-      }
-    }
+function tickMovement(time) {
+  if (!heldKeys.size) {
+    movementLoop = null;
+    avatar.classList.remove('walking');
     return;
   }
-  if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') move('up');
-  if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') move('down');
-  if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') move('left');
-  if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') move('right');
-  if ((e.key === 'e' || e.key === 'E') && nearest !== -1) openMemory(nearest);
+
+  if (time - lastMoveTime >= 16) {
+    let dx = 0, dy = 0;
+
+    if (heldKeys.has('a') || heldKeys.has('arrowleft')) dx -= 1;
+    if (heldKeys.has('d') || heldKeys.has('arrowright')) dx += 1;
+    if (heldKeys.has('w') || heldKeys.has('arrowup')) dy -= 1;
+    if (heldKeys.has('s') || heldKeys.has('arrowdown')) dy += 1;
+
+    if (dx && dy) {
+      dx *= Math.SQRT1_2;
+      dy *= Math.SQRT1_2;
+    }
+
+    const speed = 0.50;
+    x += dx * speed;
+    y += dy * speed;
+
+    lastMoveTime = time;
+
+    if (dx || dy) updatePosition();
+  }
+
+  movementLoop = requestAnimationFrame(tickMovement);
+}
+
+function startMovement() {
+  if (!movementLoop) movementLoop = requestAnimationFrame(tickMovement);
+  avatar.classList.add('walking');
+}
+
+function stopMovement() {
+  heldKeys.clear();
+
+  if (movementLoop) {
+    cancelAnimationFrame(movementLoop);
+    movementLoop = null;
+  }
+
+  avatar.classList.remove('walking');
+}
+
+document.addEventListener('keydown', event => {
+  const key = event.key.toLowerCase();
+
+  const movementKeys = {
+    arrowleft: 'left',
+    a: 'left',
+    arrowright: 'right',
+    d: 'right',
+    arrowup: 'up',
+    w: 'up',
+    arrowdown: 'down',
+    s: 'down'
+  };
+
+  if (movementKeys[key]) {
+    event.preventDefault();
+
+    if (!heldKeys.has(key)) {
+      heldKeys.add(key);
+      startMovement();
+    }
+  }
+
+  if (key === 'e' && nearest >= 0 && !event.repeat) {
+    event.preventDefault();
+    openMemory(nearest);
+  }
+
+  if (key === 'escape') closeMemory();
 });
 
-document.querySelectorAll('.controls button').forEach(btn => {
-  btn.addEventListener('click', () => move(btn.dataset.move));
+document.addEventListener('keyup', event => {
+  heldKeys.delete(event.key.toLowerCase());
+
+  if (!heldKeys.size) {
+    if (movementLoop) {
+      cancelAnimationFrame(movementLoop);
+      movementLoop = null;
+    }
+
+    avatar.classList.remove('walking');
+  }
+});
+
+window.addEventListener('blur', stopMovement);
+
+// Hold the on-screen movement buttons to walk continuously
+document.querySelectorAll('[data-move]').forEach(button => {
+  let hold = null;
+  let activePointer = null;
+
+  const stop = () => {
+    if (hold !== null) {
+      clearInterval(hold);
+      hold = null;
+    }
+
+    if (activePointer !== null) {
+      try {
+        button.releasePointerCapture(activePointer);
+      } catch (_) {}
+
+      activePointer = null;
+    }
+
+    avatar.classList.remove('walking');
+  };
+
+  const start = event => {
+    event.preventDefault();
+
+    if (activePointer !== null) return;
+
+    activePointer = event.pointerId;
+
+    try {
+      button.setPointerCapture(event.pointerId);
+    } catch (_) {}
+
+    move(button.dataset.move, 1);
+    avatar.classList.add('walking');
+    hold = setInterval(() => move(button.dataset.move, 0.25), 35);
+  };
+
+  button.addEventListener('pointerdown', start);
+  button.addEventListener('pointerup', stop);
+  button.addEventListener('pointercancel', stop);
+  button.addEventListener('lostpointercapture', stop);
+});
+
+// Open the next unlocked memory
+function openMemory(index) {
+  const nextIndex = memories.findIndex((_, memoryIndex) => !visited.has(memoryIndex));
+
+  if (index < 0 || index >= memories.length || index !== nextIndex) return;
+
+  const memory = memories[index];
+
+  visited.add(index);
+
+  // Change into the graduation outfit as soon as Memory 07 is opened.
+  updateAvatarCostume();
+
+  document.getElementById('memoryTitle').textContent = memory.title;
+  document.getElementById('memoryKicker').textContent = memory.kicker;
+  document.getElementById('memoryArt').textContent = memory.art;
+  document.getElementById('memoryText').textContent = memory.text;
+  document.getElementById('memoryNumber').textContent =
+    String(index + 1).padStart(2, '0') + ' / ' +
+    String(memories.length).padStart(2, '0');
+
+  modal.classList.add('open');
+  updatePosition();
+}
+
+function closeMemory() {
+  modal.classList.remove('open');
+
+  if (visited.size === memories.length) {
+    ending.classList.add('open');
+    return;
+  }
+
+  const nextIndex = memories.findIndex((_, index) => !visited.has(index));
+
+  updatePosition();
+
+  hint.textContent =
+    'Memory ' + String(nextIndex + 1).padStart(2, '0') +
+    ' is now unlocked. Walk to it and press E when nearby.';
+}
+
+document.getElementById('closeModal').addEventListener('click', closeMemory);
+
+modal.addEventListener('click', event => {
+  if (event.target === modal) closeMemory();
 });
 
 document.getElementById('viewMemory').addEventListener('click', () => {
-  if (nearest !== -1) openMemory(nearest);
-});
-interact.addEventListener('click', () => {
-  if (nearest !== -1) openMemory(nearest);
-});
-
-frameElements.forEach((frame, idx) => {
-  frame.addEventListener('click', () => openMemory(idx));
+  if (nearest >= 0) {
+    openMemory(nearest);
+  } else {
+    hint.textContent = 'Walk close to the bright frame, then tap VIEW MEMORY.';
+  }
 });
 
-document.getElementById('closeModal').addEventListener('click', () => {
-  modal.classList.remove('open');
+document.getElementById('helpControls').addEventListener('click', () => {
+  hint.textContent =
+    'Move with the arrow keys, W/A/S/D, or the arrow buttons. ' +
+    'Walk close to the bright frame and press E or tap VIEW MEMORY.';
+});
+
+document.getElementById('collection').addEventListener('click', () => {
   if (visited.size === memories.length) {
-    setTimeout(() => ending.classList.add('open'), 600);
+    ending.classList.add('open');
+  } else {
+    hint.textContent = 'Visit the next unlocked frame to continue.';
   }
 });
 
 document.getElementById('exit').addEventListener('click', () => {
+  stopMovement();
   museum.classList.remove('active');
   intro.style.display = 'grid';
 });
@@ -446,17 +693,17 @@ document.getElementById('exit').addEventListener('click', () => {
 document.getElementById('restart').addEventListener('click', () => {
   ending.classList.remove('open');
   visited.clear();
-  document.getElementById('collection').textContent = 'MEMORIES 0/8';
-  frameElements.forEach((f, idx) => {
-    if (idx > 0) f.classList.add('locked');
-  });
-  x = 50; y = 75;
+  x = 50;
+  y = 75;
+
+  updateAvatarCostume();
   updatePosition();
 });
 
-document.getElementById('helpControls').addEventListener('click', () => {
-  alert("How to Play:\n- Use Arrow keys, W/A/S/D, or screen arrows to move.\n- Walk up to the unlocked picture frame.\n- Press 'E' or tap 'VIEW MEMORY' to reveal memories and unlock the next frame!");
-});
+window.addEventListener('resize', updatePosition);
+
+// Set the correct outfit when the page first loads.
+updateAvatarCostume();
 </script>
 </body>
 </html>
