@@ -347,7 +347,7 @@
       }
 
       @media (max-width: 768px) and (orientation: portrait) {
-        .rotate-phone {
+        .fullscreen-requested .rotate-phone {
           position: fixed;
           inset: 0;
           z-index: 60;
@@ -908,7 +908,9 @@
             try {
               if (document.fullscreenElement) {
                 await document.exitFullscreen();
+                document.body.classList.remove("fullscreen-requested");
               } else {
+                document.body.classList.add("fullscreen-requested");
                 await document.documentElement.requestFullscreen();
               }
             } catch {
