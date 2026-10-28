@@ -373,6 +373,9 @@
           through the museum and discover every frame.
         </p>
         <button class="enter" id="enter">Enter The Museum &nbsp; ↗</button>
+        <button class="enter fullscreenButton" type="button">
+          Fullscreen Experience ⛶
+        </button>
       </div>
     </section>
     <div class="hud">
@@ -398,7 +401,7 @@
     <div class="mobile-actions">
       <button id="mobileE">View</button>
       <button id="mobileF">Sit</button>
-      <button id="fullscreenButton">Fullscreen</button>
+      <button class="fullscreenButton">Fullscreen</button>
     </div>
     <section class="modal" id="memoryModal" aria-modal="true">
       <div class="card">
@@ -900,9 +903,8 @@
           else if (nearBench && !modalOpen()) sitAtSofa();
         });
 
-        document
-          .querySelector("#fullscreenButton")
-          .addEventListener("click", async () => {
+        document.querySelectorAll(".fullscreenButton").forEach((button) =>
+          button.addEventListener("click", async () => {
             try {
               if (document.fullscreenElement) {
                 await document.exitFullscreen();
@@ -912,7 +914,8 @@
             } catch {
               say("Fullscreen is not available in this browser.");
             }
-          });
+          }),
+        );
 
         document.querySelector("#enter").addEventListener("click", () => {
           started = true;
